@@ -1,42 +1,65 @@
 <!DOCTYPE html>
+
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Gerar Documento</title>
 
 <script src="https://unpkg.com/pizzip@3.1.5/dist/pizzip.js"></script>
+
 <script src="https://unpkg.com/docxtemplater@3.37.0/build/docxtemplater.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
 </head>
 
 <body>
 
-<h2>Preencha o formulário</h2>
+<h2>Formulário</h2>
 
-<label>Nome completo:</label><br>
-<input id="Nome_completo"><br><br>
+<label>Nome completo</label><br> <input id="Nome_completo"><br><br>
 
-<label>Data de nascimento:</label><br>
-<input id="Data_nascimento"><br><br>
+<label>Data de nascimento</label><br> <input id="Data_nascimento"><br><br>
 
-<label>Estado de nascimento:</label><br>
-<input id="Estado_nascimento"><br><br>
+<label>Estado de nascimento</label><br> <input id="Estado_nascimento"><br><br>
 
-<label>Tribunal:</label><br>
-<input id="Tribunal"><br><br>
+<label>Tribunal</label><br> <input id="Tribunal"><br><br>
 
-<button onclick="gerar()">Gerar Documento</button>
+<button onclick="gerar()">Gerar documento</button>
+
+<p id="erro" style="color:red"></p>
 
 <script>
 
+function tratarErro(error) {
+    const erroDiv = document.getElementById("erro");
+
+    console.log(error);
+
+    if (error.properties && error.properties.errors) {
+        const mensagens = error.properties.errors.map(function (e) {
+            return e.properties.explanation;
+        });
+
+        erroDiv.innerHTML = "Erro no documento:<br>" + mensagens.join("<br>");
+    } else {
+        erroDiv.innerHTML = "Erro: " + error.message;
+    }
+}
+
 async function gerar() {
 
-let response = await fetch("Teste.docx");
+try {
+
+let response = await fetch("./Teste.docx");
 let content = await response.arrayBuffer();
 
 let zip = new PizZip(content);
-let doc = new window.docxtemplater(zip);
+
+let doc = new window.docxtemplater(zip, {
+paragraphLoop: true,
+linebreaks: true
+});
 
 doc.setData({
 Nome_completo: document.getElementById("Nome_completo").value,
@@ -48,10 +71,18 @@ Tribunal: document.getElementById("Tribunal").value
 doc.render();
 
 let out = doc.getZip().generate({
-type:"blob"
+type: "blob"
 });
 
-saveAs(out, "documento.docx");
+let nome = document.getElementById("Nome_completo").value.replace(/ /g,"_");
+
+saveAs(out, nome + "_documento.docx");
+
+} catch(error) {
+
+tratarErro(error);
+
+}
 
 }
 
