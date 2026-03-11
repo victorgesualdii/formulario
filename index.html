@@ -38,8 +38,8 @@ let zip = new PizZip(content);
 
 let doc = new docxtemplater(zip, {
 delimiters: {
-start: "{{",
-end: "}}"
+start: "[[",
+end: "]]"
 }
 });
 
@@ -64,3 +64,4 @@ saveAs(out, nome + ".docx");
 
 </body>
 </html>
+
