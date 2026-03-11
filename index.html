@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Gerar Documento</title>
+
+<script src="https://unpkg.com/pizzip@3.1.5/dist/pizzip.js"></script>
+<script src="https://unpkg.com/docxtemplater@3.37.0/build/docxtemplater.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+</head>
+
+<body>
+
+<h2>Preencha o formulário</h2>
+
+<label>Nome completo:</label><br>
+<input id="Nome_completo"><br><br>
+
+<label>Data de nascimento:</label><br>
+<input id="Data_nascimento"><br><br>
+
+<label>Estado de nascimento:</label><br>
+<input id="Estado_nascimento"><br><br>
+
+<label>Tribunal:</label><br>
+<input id="Tribunal"><br><br>
+
+<button onclick="gerar()">Gerar Documento</button>
+
+<script>
+
+async function gerar() {
+
+let response = await fetch("Teste.docx");
+let content = await response.arrayBuffer();
+
+let zip = new PizZip(content);
+let doc = new window.docxtemplater(zip);
+
+doc.setData({
+Nome_completo: document.getElementById("Nome_completo").value,
+Data_nascimento: document.getElementById("Data_nascimento").value,
+Estado_nascimento: document.getElementById("Estado_nascimento").value,
+Tribunal: document.getElementById("Tribunal").value
+});
+
+doc.render();
+
+let out = doc.getZip().generate({
+type:"blob"
+});
+
+saveAs(out, "documento.docx");
+
+}
+
+</script>
+
+</body>
+</html>
