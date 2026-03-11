@@ -15,7 +15,7 @@
 
 <body>
 
-<h2>Formulário</h2>
+<h2>Gerador de Documento</h2>
 
 <label>Nome completo</label><br> <input id="Nome_completo"><br><br>
 
@@ -27,48 +27,28 @@
 
 <button onclick="gerar()">Gerar documento</button>
 
-<p id="erro" style="color:red"></p>
-
 <script>
-
-function tratarErro(error) {
-    const erroDiv = document.getElementById("erro");
-
-    console.log(error);
-
-    if (error.properties && error.properties.errors) {
-        const mensagens = error.properties.errors.map(function (e) {
-            return e.properties.explanation;
-        });
-
-        erroDiv.innerHTML = "Erro no documento:<br>" + mensagens.join("<br>");
-    } else {
-        erroDiv.innerHTML = "Erro: " + error.message;
-    }
-}
 
 async function gerar() {
 
-try {
-
-let response = await fetch("./Teste.docx");
+let response = await fetch("Teste.docx");
 let content = await response.arrayBuffer();
 
 let zip = new PizZip(content);
 
-let doc = new window.docxtemplater(zip, {
-paragraphLoop: true,
-linebreaks: true
+let doc = new docxtemplater(zip, {
+delimiters: {
+start: "{{",
+end: "}}"
+}
 });
 
-doc.setData({
+doc.render({
 Nome_completo: document.getElementById("Nome_completo").value,
 Data_nascimento: document.getElementById("Data_nascimento").value,
 Estado_nascimento: document.getElementById("Estado_nascimento").value,
 Tribunal: document.getElementById("Tribunal").value
 });
-
-doc.render();
 
 let out = doc.getZip().generate({
 type: "blob"
@@ -76,13 +56,7 @@ type: "blob"
 
 let nome = document.getElementById("Nome_completo").value.replace(/ /g,"_");
 
-saveAs(out, nome + "_documento.docx");
-
-} catch(error) {
-
-tratarErro(error);
-
-}
+saveAs(out, nome + ".docx");
 
 }
 
