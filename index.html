@@ -26,6 +26,7 @@ button { padding: 10px; font-size: 16px; }
 <input id="Nome_completo" placeholder="Nome completo">
 <input id="Data_nascimento" placeholder="Data de nascimento">
 <input id="Estado_nascimento" placeholder="Estado de nascimento">
+<input id="pais" placeholder="País">
 <input id="Tribunal" placeholder="Tribunal">
 
 <button onclick="gerar()">Gerar Documento</button>
@@ -50,6 +51,7 @@ doc.render({
 Nome_completo: document.getElementById("Nome_completo").value,
 Data_nascimento: document.getElementById("Data_nascimento").value,
 Estado_nascimento: document.getElementById("Estado_nascimento").value,
+pais: document.getElementById("pais").value,
 Tribunal: document.getElementById("Tribunal").value
 });
 
